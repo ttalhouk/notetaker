@@ -27,6 +27,7 @@ const Profile = React.createClass({
     }
   },
   componentWillMount: function() {
+    console.log(ENV);
     this.ref = Firebase.database().ref('/');
     var childRef = this.ref.child(this.props.params.username);
     this.bindAsArray(childRef,'notes');
