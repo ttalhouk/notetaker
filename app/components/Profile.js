@@ -27,7 +27,6 @@ const Profile = React.createClass({
     }
   },
   componentWillMount: function() {
-    console.log(ENV);
     this.ref = Firebase.database().ref('/');
     var childRef = this.ref.child(this.props.params.username);
     this.bindAsArray(childRef,'notes');
@@ -36,7 +35,6 @@ const Profile = React.createClass({
     this.unbind('notes');
   },
   render: function(){
-    console.log(this.props);
     return (
       <div className="row">
         <div className="col-md-4">
