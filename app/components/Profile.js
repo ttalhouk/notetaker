@@ -5,7 +5,8 @@ const Repos = require('./GitHub/Repos');
 const Notes = require('./Notes/Notes');
 const ReactFireMixin = require('reactfire');
 const Firebase = require('firebase');
-const ENV = require('../../globals/env')
+const ENV = require('../../globals/env');
+const helpers = require('../utils/helpers');
 
 var config = {
   apiKey: ENV.FIREBASE_KEY,
@@ -21,15 +22,24 @@ const Profile = React.createClass({
     return {
       notes: ["Note 1", "Note 2", "Note 3"],
       bio: {
-        name: 'default name'
+        name: ''
       },
-      repos: ["Repo1", "Repo2", "Repo3"]
+      repos: []
     }
   },
   componentWillMount: function() {
     this.ref = Firebase.database().ref('/');
     var childRef = this.ref.child(this.props.params.username);
     this.bindAsArray(childRef,'notes');
+
+    helpers.getGitHubInfo(this.props.params.username)
+      .then(function(data){
+        this.setState({
+          bio: data.bio,
+          repos: data.repos
+        });
+      }.bind(this));
+      console.log(this.state.repos);
   },
   componentWillUnmount: function() {
     this.unbind('notes');
