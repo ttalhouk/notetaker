@@ -27,27 +27,34 @@ const Profile = React.createClass({
       repos: []
     }
   },
-  componentWillMount: function() {
+  componentDidMount: function() {
     this.ref = Firebase.database().ref('/');
-    var childRef = this.ref.child(this.props.params.username);
+    this.init(this.props.params.username);
+  },
+  componentWillUnmount: function() {
+    this.unbind('notes');
+  },
+  componentWillReceiveProps: function(nextProps){
+    this.unbind('notes');
+    this.init(nextProps.params.username)
+  },
+  init: function(username) {
+    var childRef = this.ref.child(username);
     this.bindAsArray(childRef,'notes');
 
-    helpers.getGitHubInfo(this.props.params.username)
+    helpers.getGitHubInfo(username)
       .then(function(data){
         this.setState({
           bio: data.bio,
           repos: data.repos
         });
       }.bind(this));
-      console.log(this.state.repos);
-  },
-  componentWillUnmount: function() {
-    this.unbind('notes');
   },
   handleNewNote: function(newNote) {
     // update firebase
     this.ref.child(this.props.params.username).child(this.state.notes.length).set(newNote);
   },
+
   render: function(){
     return (
       <div className="row">
